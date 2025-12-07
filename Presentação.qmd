@@ -1,0 +1,191 @@
+---
+title: "Trabalho final - Classificação do Risco Cardiovascular"
+subtitle: "Universidade Federal de Pernambuco"
+author: "Tatiana Alejandra Moreno Avila"
+format: 
+  beamer:
+    fontsize: 8pt
+editor: visual
+---
+
+
+## Introdução
+
+
+<div style="font-size:60%">
+
+No contexto das doenças cardiovasculares, estas representam a principal causa de mortalidade no mundo.A prevalência dos diferentes fatores de risco para o desenvolvimento de doenças cardiovasculares tem aumentado ao longo dos anos.
+
+Este estudo busca caracterizar o perfil cardiovascular de um banco de dados proveniente do projeto “Corações de Baependi”, desenvolvido na Universidade de São Paulo.
+
+Através de um modelo preditivo de rede neural totalmente conectada, busca-se identificar padrões e correlações entre variáveis antropométricas e bioquímicas associadas ao risco cardiovascular.
+
+</div>
+
+```{r}
+#| echo: false
+#| out.width: "50%"
+#| fig-align: "center"
+knitr::include_graphics("Cardiovascular2.png")
+
+```
+
+## Metodologia
+
+<div style="font-size:60%">
+
+Os modelos de redes neurais binárias buscam prever uma variável categórica, sendo no nosso caso o risco cardiovascular. Essa variável é definida pelos parâmetros apresentados em diversas pesquisas, levando em conta variáveis como colesterol total (CTOTAL), LDL (CLDL), HDL (CHDL), triglicerídeos (Triglic) e idade, as quais possuem correlação associada ao risco cardiovascular.
+
+</div>
+
+```{r}
+#| echo: false
+#| fig-cap: "Matriz de Correlação"
+#| out.width: "70%"
+#| fig-align: "center"
+knitr::include_graphics("MatrizCor.png")
+
+```
+
+## 
+
+<div style="font-size:60%">
+
+Esta base de dados conta com um número de 1587 registros e possui 12 variáveis explicativas, das quais algumas são utilizadas para determinar a variável de risco cardiovascular, conforme estipulado pela Organização Mundial da Saúde. 
+
+Para realizar a aplicação, primeiro realizamos uma análise exploratória da base de dados, pois ela conta com as seguintes variáveis de medidas antropométricas e bioquímicas.
+</div>
+
+```{r}
+#| echo: false
+
+#| out.width: "70%"
+#| fig-align: "center"
+knitr::include_graphics("des.png")
+
+```
+
+
+##
+
+<div style="font-size:60%">
+Nossa variável de risco divide nossa base de dados em: Alto risco (1): 429 pacientes, Baixo risco (0): 1158 pacientes e Proporção: 27,03% de alto risco.
+</div>
+
+```{r}
+#| echo: false
+#| fig-align: "center"
+#| out.width: "50%"
+knitr::include_graphics("Redad.png")
+
+```
+
+<div style="font-size:60%">
+No gráfico anterior, podemos observar uma diferença entre as idades de ambos os grupos, sendo mais comum que os pacientes com baixo risco sejam mais jovens do que os pacientes com alto risco.
+</div>
+
+## Estrutura do Modelo
+
+<div style="font-size:70%">
+
+Depois de realizar o respectivo escalonamento e padronização das variáveis, o modelo de rede neural binária é definido da seguinte maneira:
+
+```text
+Model: "sequential"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ dense (Dense)                   │ (None, 64)             │           512 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dropout (Dropout)               │ (None, 64)             │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_1 (Dense)                 │ (None, 32)             │         2,080 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dropout_1 (Dropout)             │ (None, 32)             │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_2 (Dense)                 │ (None, 16)             │           528 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_3 (Dense)                 │ (None, 1)              │            17 │
+└─────────────────────────────────┴────────────────────────┴───────────────┘
+
+Total params: 3,137 (12.25 KB)
+Trainable params: 3,137 (12.25 KB)
+Non-trainable params: 0 (0.00 B)
+```
+</div>
+
+## Avaliação
+
+<div style="font-size:60%">
+
+Após treinar o modelo, obtemos o seguinte desempenho em sua respectiva avaliação do modelo.
+
+</div>
+
+```{r}
+#| echo: false
+#| fig-cap: "Avaliação - Accuracy e Loss"
+#| out.width: "60%"
+#| fig-align: "center"
+knitr::include_graphics("Eval.png")
+
+```
+
+<div style="font-size:60%">
+Notemos que este modelo apresenta um bom desempenho, o que é evidenciado pelas curvas de accuracy e loss, com valores de 0,8176 e 0,4348.
+</div>
+
+## matriz de confusão
+
+::: {layout="[1,1]"}
+
+```{r}
+#| echo: false
+#| fig-align: "center"
+#| out.width: "90%"
+knitr::include_graphics("MatrizConf.png")
+
+```
+
+```{r}
+#| echo: false
+#| fig-align: "center"
+#| out.width: "90%"
+knitr::include_graphics("mt.png")
+
+```
+
+:::
+
+<div style="font-size:60%">
+
+Este modelo apresenta um melhor desempenho na identificação de pacientes com baixo risco e, para os pacientes de alto risco, possui um desempenho moderado. Além disso, o modelo demonstra capturar padrões relevantes das variáveis.
+
+</div>
+
+
+
+## Conclusão 
+
+<div style="font-size:70%">
+
+Este modelo de rede neural apresenta um comportamento razoavelmente bom e, com base nos resultados obtidos, mostra-se uma proposta satisfatória para determinar padrões na classificação dos pacientes, permitindo assim identificar quais outros fatores podem influenciar no risco de desenvolver alguma doença cardiovascular. Sendo assim, constitui uma possível ferramenta de apoio em pesquisas de saúde e genética, capaz de classificar de maneira aceitável, a partir de medidas antropométricas e bioquímicas, todos os padrões que levam a um risco elevado, possibilitando análises exploratórias clínico-descritivas mais rigorosas.
+
+</div>
+
+## Referências 
+
+<div style="font-size:70%">
+
+- Bishop, C. M. (2006). Pattern Recognition and Machine Learning. Springer.
+
+- Goodfellow, I., Bengio, Y., & Courville, A. (2016). Deep Learning.
+
+- Hastie, T., Tibshirani, R., & Friedman, J. (2009). The Elements of 
+  Statistical Learning. Springer.
+
+- Organização Mundial da Saúde (OMS). Relatórios sobre doenças 
+  cardiovasculares.
+
+</div>
+
